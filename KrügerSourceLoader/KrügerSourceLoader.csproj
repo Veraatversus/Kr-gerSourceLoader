@@ -5,6 +5,7 @@
     <TargetFrameworks>netcoreapp3.1;net471</TargetFrameworks>
     <StartupObject>KrügerSourceLoader.Program</StartupObject>
     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;osx.10.14-x64</RuntimeIdentifiers>
+    <AssemblyName>ksl</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

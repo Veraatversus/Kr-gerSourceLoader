@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -112,7 +113,7 @@ namespace KrügerSourceLoader {
     private ActionBlock<CodeFile> SaveBlock;
     private string HostUrl;
     private string Project;
-    private string OutputFoler = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+    private string OutputFoler = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
     private Action<string> OnFinishFile;
     private ConcurrentBag<string> LoadedFiles = new ConcurrentBag<string>();
 
