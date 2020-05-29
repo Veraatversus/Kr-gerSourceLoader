@@ -51,7 +51,12 @@ namespace KrügerSourceLoader {
           }
         }
         else {
-          return IncludeRegex.Value.Matches(Source).OfType<Match>().Select((m) => m.Groups[1].Value);
+          return IncludeRegex.Value.Matches(Source).OfType<Match>()
+            .Concat(commonfileRegex.Value.Matches(Source).OfType<Match>()
+            .Where(m => {
+              return commonFileExtensions.Value.Contains(m.Groups[4].Value.ToLower().Trim().Remove(0, 1));
+            }))
+            .Select((m) => m.Groups[1].Value);
         }
       }
       return Enumerable.Empty<string>();
@@ -63,6 +68,21 @@ namespace KrügerSourceLoader {
 
     private static ThreadLocal<Regex> IncludeRegex = new ThreadLocal<Regex>(() => new Regex("#include\\s*\"((\\w*[\\/\\\\])*(\\w*(\\.\\w *)?))\""));
     private static ThreadLocal<Regex> makefileRegex = new ThreadLocal<Regex>(() => new Regex("[Ss][Rr][Cc]\\s*=\\s*((\\w*.?\\w*\\s*?)*)"));
+    private static ThreadLocal<Regex> commonfileRegex = new ThreadLocal<Regex>(() => new Regex("\"((\\w*[\\/\\\\])*(\\w*(\\.\\w*)))\""));
+
+    private static ThreadLocal<List<string>> commonFileExtensions = new ThreadLocal<List<string>>(() => new List<string> {
+    "bmp",
+    "glsl",
+    "jpeg",
+    "mp3",
+    "mp4",
+    "png",
+    "tar",
+    "tar.gz",
+    "txt",
+    "xml",
+    "zip",
+    });
 
     #endregion Private Fields
   }

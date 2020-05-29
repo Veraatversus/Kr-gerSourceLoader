@@ -22,6 +22,7 @@ namespace KrügerSourceLoader {
       }
       else {
         Console.WriteLine("A downloader for the source files provided by Jens Krüger");
+        Console.WriteLine("Possible projects are eg. \"Raytrace\", \"OpenGL\"");
         while (true) {
           Console.Write("Please insert project name: ");
           var input = Console.ReadLine();
