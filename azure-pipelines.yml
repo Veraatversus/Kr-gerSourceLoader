@@ -1,0 +1,85 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**\*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  Version.MajorMinor: 1.0
+  version.Revision: $[counter(variables['version.MajorMinor'], 0)]
+  versionNumber: '$(version.MajorMinor).$(version.Revision)'
+
+steps:
+- task: PowerShell@2
+  displayName: Set the name of the build (i.e. the Build.BuildNumber)
+  inputs:
+    targetType: 'inline'
+    script: |
+      [string] $buildName = "$(versionNumber)_$(Build.SourceBranchName)"
+      Write-Host "Setting the name of the build to '$buildName'."
+      Write-Host "##vso[build.updatebuildnumber]$buildName"
+
+- task: PowerShell@2
+  displayName: Set the name of the Repository
+  inputs:
+    targetType: 'inline'
+    script: |
+      [string] $RepoName = "$(Build.Repository.Name)".Remove(0, "$(Build.Repository.Name)".IndexOf("/") + 1)
+      Write-Host "Setting the name of the Repository to '$RepoName'."
+      Write-Host "##vso[task.setvariable variable=RepoName]$RepoName"
+
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VersionDotNetCoreAssemblies@2
+  inputs:
+    Path: '$(Build.SourcesDirectory)\$(RepoName)'
+    VersionNumber: '$(versionNumber)'
+    Injectversion: false
+    VersionRegex: '\d+\.\d+\.\d+'
+    FilenamePattern: '.csproj'
+    OutputVersion: 'OutputedVersion'
+    AddDefault: true
+  continueOnError: true
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\osx-x64 /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\osx-x64'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\osx-x64.zip'
+    replaceExistingArchive: true
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github.com_Veraatversus'
+    repositoryName: '$(Build.Repository.Name)'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: '$(versionNumber)'
+    title: '$(versionNumber): $(RepoName)'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
+    assets: '$(Build.ArtifactStagingDirectory)\*.zip'
+    
