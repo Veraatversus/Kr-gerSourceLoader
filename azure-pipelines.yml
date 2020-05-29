@@ -53,6 +53,7 @@ steps:
     AddDefault: true
   continueOnError: true
 
+#osx-x64
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
@@ -68,6 +69,114 @@ steps:
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)\osx-x64.zip'
+    replaceExistingArchive: true
+
+#win-x64
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\win-x64 /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile1.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\win-x64'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\win-x64.zip'
+    replaceExistingArchive: true
+
+#linux-x64
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\linux-x64 /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile2.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\linux-x64'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\linux-x64.zip'
+    replaceExistingArchive: true
+
+#Portable
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\Portable /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile3.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\Portable'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\Portable.zip'
+    replaceExistingArchive: true
+
+#Standalone_linux-x64
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\Standalone_linux-x64 /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile4.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\Standalone_linux-x64'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\Standalone_linux-x64.zip'
+    replaceExistingArchive: true
+
+#Standalone_osx-x64
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\Standalone_osx-x64 /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile5.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\Standalone_osx-x64'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\Standalone_osx-x64'
+    replaceExistingArchive: true
+
+#Standalone_win-x86
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output Publish\Standalone_win-x86 /p:PublishProfile=$(System.DefaultWorkingDirectory)\$(RepoName)\Properties\PublishProfiles\FolderProfile6.pubxml /p:DeployOnBuild=true -f netcoreapp3.1'
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)\Publish\Standalone_win-x86'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\Standalone_win-x86'
     replaceExistingArchive: true
 
 - task: GitHubRelease@1
