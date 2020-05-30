@@ -18,6 +18,7 @@ namespace KrügerSourceLoader {
     public string RelativePath => RelativeUrl.Replace('/', Path.DirectorySeparatorChar);
 
     public string RelativeUrl { get; } = string.Empty;
+    public byte[] Data { get; internal set; }
 
     #endregion Public Properties
 

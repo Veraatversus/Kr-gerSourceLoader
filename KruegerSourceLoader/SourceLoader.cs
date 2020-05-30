@@ -66,6 +66,7 @@ namespace KrügerSourceLoader {
           var responseMessage = await httpClient.GetAsync($"{HostUrl}{Project}/{file.RelativeUrl}");
           if (responseMessage.IsSuccessStatusCode) {
             file.Source = await responseMessage.Content.ReadAsStringAsync();
+            file.Data = await responseMessage.Content.ReadAsByteArrayAsync();
             return file;
           }
           else {
@@ -96,7 +97,7 @@ namespace KrügerSourceLoader {
       try {
         var fileinfo = new FileInfo(Path.Combine(OutputFoler, $"{Project}{Path.DirectorySeparatorChar}{obj.RelativePath}"));
         fileinfo.Directory.Create();
-        File.WriteAllText(fileinfo.FullName, obj.Source);
+        File.WriteAllBytes(fileinfo.FullName, obj.Data);
         OnFinishFile?.Invoke($"{Project}{Path.DirectorySeparatorChar}{obj.RelativePath}");
       }
       catch (Exception e) {
